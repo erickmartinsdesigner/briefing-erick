@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefing — Posts & Criativos · @erickdesigner</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f0e0c;
+    --ink-soft: #6b6760;
+    --ink-faint: #c4c1ba;
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --gold: #b8903a;
+    --gold-light: #f0e6cc;
+    --radius: 3px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2.5rem;
+    border-bottom: 1px solid var(--ink-faint);
+    background: var(--bg);
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+  }
+  .logo span { color: var(--gold); }
+
+  .progress-wrap { display: flex; align-items: center; gap: 0.75rem; }
+  .progress-bar { width: 120px; height: 2px; background: var(--ink-faint); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.5s cubic-bezier(.4,0,.2,1); width: 0%; }
+  .progress-label { font-size: 0.75rem; color: var(--ink-soft); font-weight: 500; min-width: 44px; text-align: right; }
+
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+
+  .screen {
+    display: none;
+    max-width: 640px;
+    width: 100%;
+    animation: fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .intro-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-light);
+    background: var(--gold-light);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+    margin-bottom: 1.75rem;
+  }
+
+  .intro-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .intro-title em { font-style: italic; color: var(--gold); }
+
+  .intro-body {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    margin-bottom: 0.75rem;
+    font-weight: 300;
+  }
+
+  .intro-note {
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .q-step {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .q-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .q-hint {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.75rem;
+    font-weight: 300;
+    line-height: 1.65;
+  }
+
+  .q-example {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    margin-top: -1.2rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--gold-light);
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--ink-faint);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, textarea:focus { border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+  .input-pair { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .opt-btn {
+    background: var(--surface);
+    border: 1px solid var(--ink-faint);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .opt-btn:hover { border-color: var(--gold); color: var(--ink); }
+  .opt-btn.selected { border-color: var(--gold); background: var(--gold-light); color: var(--ink); }
+
+  .opt-multi-hint { font-size: 0.75rem; color: var(--ink-faint); margin-bottom: 0.85rem; }
+
+  .scale-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .scale-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .scale-label {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    width: 110px;
+    flex-shrink: 0;
+    line-height: 1.3;
+  }
+
+  .scale-btns {
+    display: flex;
+    gap: 0.35rem;
+    flex: 1;
+  }
+
+  .scale-btn {
+    flex: 1;
+    aspect-ratio: 1;
+    max-width: 40px;
+    background: var(--surface);
+    border: 1px solid var(--ink-faint);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .scale-btn:hover { border-color: var(--gold); }
+  .scale-btn.selected { background: var(--gold-light); border-color: var(--gold); color: var(--ink); font-weight: 500; }
+
+  .scale-ends {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0 0 110px;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .scale-end-label {
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  .btn-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.75rem;
+  }
+
+  .btn-next {
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .btn-next:hover { background: #2a2a26; }
+  .btn-next:active { transform: scale(0.98); }
+  .btn-next.gold { background: var(--gold); }
+  .btn-next.gold:hover { background: #a07830; }
+
+  .btn-skip {
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    cursor: pointer;
+    padding: 0.5rem 0;
+    transition: color 0.15s;
+  }
+  .btn-skip:hover { color: var(--ink-soft); }
+
+  .thanks-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--gold-light);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .thanks-icon svg { width: 26px; height: 26px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .thanks-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--ink);
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .thanks-body {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1.25rem;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--ink-faint);
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">@erick<span>designer</span></div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel"></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- INTRO -->
+  <div class="screen active" id="s0">
+    <div class="intro-tag">Briefing · Social Media</div>
+    <h1 class="intro-title">Vamos criar<br>posts que <em>vendem.</em></h1>
+    <p class="intro-body">Antes de qualquer pixel, preciso entender a sua marca a fundo — o que você comunica, como quer ser visto e o que move o seu público.</p>
+    <p class="intro-body">São <strong>9 perguntas</strong>. Leva menos de 5 minutos e faz toda a diferença no resultado final.</p>
+    <p class="intro-note">Suas respostas são confidenciais e usadas exclusivamente para o desenvolvimento dos seus criativos.</p>
+    <div class="btn-row">
+      <button class="btn-next gold" onclick="goTo(1)">Iniciar briefing →</button>
+    </div>
+  </div>
+
+  <!-- Q1: Marca e o que oferece -->
+  <div class="screen" id="s1">
+    <div class="q-step">01 / 10</div>
+    <h2 class="q-title">Me fale sobre a sua marca e o que você oferece.</h2>
+    <p class="q-hint">Nome do negócio, o que você vende ou entrega, e para quem. Pode ser direto — sem enrolação.</p>
+    <div class="q-example">Ex: "Sou nutricionista e vendo consultas online e um programa de 90 dias para mulheres que querem emagrecer sem dieta restritiva."</div>
+    <textarea id="q1" placeholder="Escreva aqui..."></textarea>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(2)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(2)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q2: Público -->
+  <div class="screen" id="s2">
+    <div class="q-step">02 / 10</div>
+    <h2 class="q-title">Quem é a pessoa que você quer parar no seu post?</h2>
+    <p class="q-hint">Pense na pessoa real que compra de você. Idade, rotina, o que ela sente, o que ela quer. Quanto mais específico, melhor o criativo vai falar com ela.</p>
+    <div class="q-example">Ex: "Mulheres de 30 a 45 anos, mães, que trabalham fora, não têm tempo para academia e se sentem culpadas com a alimentação."</div>
+    <textarea id="q2" placeholder="Descreva essa pessoa..."></textarea>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(3)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(3)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q3: O que a marca precisa transmitir -->
+  <div class="screen" id="s3">
+    <div class="q-step">03 / 10</div>
+    <h2 class="q-title">O que você quer que as pessoas <em style="font-style:italic;color:var(--gold)">sintam</em> ao ver seus posts?</h2>
+    <p class="q-hint">Não o que você vende — o que você quer provocar. Uma emoção, uma sensação, uma reação.</p>
+    <div class="opt-multi-hint">Pode escolher mais de um</div>
+    <div class="options-grid" id="q3-opts">
+      <button class="opt-btn" onclick="toggleOpt(this)">"Isso é pra mim"</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">"Quero isso agora"</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">"Essa marca é séria"</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">"Me identifico"</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">"Parece premium"</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">"Preciso seguir"</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">"Confio nessa pessoa"</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">"É diferente"</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(4)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(4)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q4: Tom de voz -->
+  <div class="screen" id="s4">
+    <div class="q-step">04 / 10</div>
+    <h2 class="q-title">Como a sua marca fala?</h2>
+    <p class="q-hint">Se a sua marca fosse uma pessoa numa conversa, como ela seria? Escolha o tom que mais representa como você quer se comunicar.</p>
+    <div class="options-grid" id="q4-opts">
+      <button class="opt-btn" onclick="selectOpt(this, 'q4-opts')">Direto e objetivo<br><span style="font-size:0.75rem;color:var(--ink-faint)">Vai direto ao ponto</span></button>
+      <button class="opt-btn" onclick="selectOpt(this, 'q4-opts')">Próximo e humano<br><span style="font-size:0.75rem;color:var(--ink-faint)">Fala como amigo</span></button>
+      <button class="opt-btn" onclick="selectOpt(this, 'q4-opts')">Autoridade e técnico<br><span style="font-size:0.75rem;color:var(--ink-faint)">Transmite expertise</span></button>
+      <button class="opt-btn" onclick="selectOpt(this, 'q4-opts')">Inspirador e motivador<br><span style="font-size:0.75rem;color:var(--ink-faint)">Gera impulso</span></button>
+      <button class="opt-btn" onclick="selectOpt(this, 'q4-opts')">Elegante e sofisticado<br><span style="font-size:0.75rem;color:var(--ink-faint)">Tom premium</span></button>
+      <button class="opt-btn" onclick="selectOpt(this, 'q4-opts')">Descontraído e leve<br><span style="font-size:0.75rem;color:var(--ink-faint)">Sem formalidade</span></button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(5)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(5)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q5: Referências visuais -->
+  <div class="screen" id="s5">
+    <div class="q-step">05 / 10</div>
+    <h2 class="q-title">Quais perfis ou marcas têm o visual que você admira?</h2>
+    <p class="q-hint">Pode ser do seu nicho ou não. O que importa é o estilo visual — cores, tipografia, composição. Cole os @ ou nomes das marcas.</p>
+    <div class="q-example">Ex: "@hotzapp, @brutobrand, Nike Brasil — gosto do contraste forte, tipografia grande e pouco texto."</div>
+    <textarea id="q5" placeholder="Liste os perfis ou marcas..."></textarea>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(6)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(6)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q6: O que NÃO quer -->
+  <div class="screen" id="s6">
+    <div class="q-step">06 / 10</div>
+    <h2 class="q-title">O que você <em style="font-style:italic;color:var(--gold)">não quer ver</em> nos seus posts?</h2>
+    <p class="q-hint">Referências negativas são tão valiosas quanto as positivas. Estilos, cores, formatos ou exemplos que você definitivamente quer evitar.</p>
+    <div class="q-example">Ex: "Nada muito colorido, sem templates genéricos do Canva, evito texto em caixa alta demais, não gosto de fundo branco com letras pretas simples."</div>
+    <textarea id="q6" placeholder="O que definitivamente não combina com a sua marca..."></textarea>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(7)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(7)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q7: Paleta e estilo visual -->
+  <div class="screen" id="s7">
+    <div class="q-step">07 / 10</div>
+    <h2 class="q-title">Como você imagina o visual da sua marca?</h2>
+    <p class="q-hint">Escolha os estilos que mais combinam com o que você quer transmitir. Isso vai guiar paleta, tipografia e composição.</p>
+    <div class="opt-multi-hint">Pode escolher mais de um</div>
+    <div class="options-grid" id="q7-opts">
+      <button class="opt-btn" onclick="toggleOpt(this)">Minimalista e clean</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Escuro e impactante</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Claro e leve</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Colorido e vibrante</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Terroso e orgânico</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Luxo e sofisticação</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Urbano e moderno</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Editorial e arrojado</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(8)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(8)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q8: Escala de posicionamento -->
+  <div class="screen" id="s8">
+    <div class="q-step">08 / 10</div>
+    <h2 class="q-title">Onde a sua marca se posiciona?</h2>
+    <p class="q-hint">Marque onde você se vê em cada escala. Isso calibra o equilíbrio visual dos criativos.</p>
+
+    <div class="scale-ends" style="padding-left:0;margin-bottom:0.25rem;">
+      <span class="scale-end-label" style="opacity:0">.</span>
+      <span class="scale-end-label" style="padding-left:110px">← mais próximo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mais próximo →</span>
+    </div>
+
+    <div class="scale-wrap">
+      <div class="scale-row">
+        <div class="scale-label">Popular ↔ Premium</div>
+        <div class="scale-btns" id="sc1">
+          <button class="scale-btn" onclick="selectScale('sc1',this)">1</button>
+          <button class="scale-btn" onclick="selectScale('sc1',this)">2</button>
+          <button class="scale-btn" onclick="selectScale('sc1',this)">3</button>
+          <button class="scale-btn" onclick="selectScale('sc1',this)">4</button>
+          <button class="scale-btn" onclick="selectScale('sc1',this)">5</button>
+        </div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label">Descontraído ↔ Sério</div>
+        <div class="scale-btns" id="sc2">
+          <button class="scale-btn" onclick="selectScale('sc2',this)">1</button>
+          <button class="scale-btn" onclick="selectScale('sc2',this)">2</button>
+          <button class="scale-btn" onclick="selectScale('sc2',this)">3</button>
+          <button class="scale-btn" onclick="selectScale('sc2',this)">4</button>
+          <button class="scale-btn" onclick="selectScale('sc2',this)">5</button>
+        </div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label">Clássico ↔ Moderno</div>
+        <div class="scale-btns" id="sc3">
+          <button class="scale-btn" onclick="selectScale('sc3',this)">1</button>
+          <button class="scale-btn" onclick="selectScale('sc3',this)">2</button>
+          <button class="scale-btn" onclick="selectScale('sc3',this)">3</button>
+          <button class="scale-btn" onclick="selectScale('sc3',this)">4</button>
+          <button class="scale-btn" onclick="selectScale('sc3',this)">5</button>
+        </div>
+      </div>
+      <div class="scale-row">
+        <div class="scale-label">Discreto ↔ Chamativo</div>
+        <div class="scale-btns" id="sc4">
+          <button class="scale-btn" onclick="selectScale('sc4',this)">1</button>
+          <button class="scale-btn" onclick="selectScale('sc4',this)">2</button>
+          <button class="scale-btn" onclick="selectScale('sc4',this)">3</button>
+          <button class="scale-btn" onclick="selectScale('sc4',this)">4</button>
+          <button class="scale-btn" onclick="selectScale('sc4',this)">5</button>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goTo(9)">Continuar →</button>
+      <button class="btn-skip" onclick="goTo(9)">Pular</button>
+    </div>
+  </div>
+
+  <!-- Q9: Formatos -->
+  <div class="screen" id="s9">
+    <div class="q-step">09 / 09</div>
+    <h2 class="q-title">Quais formatos de post você precisa?</h2>
+    <p class="q-hint">Selecione tudo o que faz parte da sua estratégia de conteúdo.</p>
+    <div class="opt-multi-hint">Pode escolher mais de um</div>
+    <div class="options-grid" id="q9-opts">
+      <button class="opt-btn" onclick="toggleOpt(this)">Post estático feed</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Carrossel</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Stories</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Capa de reels</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Anúncio (tráfego pago)</button>
+      <button class="opt-btn" onclick="toggleOpt(this)">Banner para site</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next gold" onclick="finish()">Enviar briefing →</button>
+      <button class="btn-skip" onclick="finish()">Pular</button>
+    </div>
+  </div>
+
+
+
+  <!-- THANKS -->
+  <div class="screen" id="sThanks">
+    <div class="thanks-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2 class="thanks-title">Briefing<br>recebido.</h2>
+    <p class="thanks-body">Obrigado por confiar no meu trabalho. Em breve entro em contato pelo canal informado para darmos início à criação dos seus posts.</p>
+    <p class="thanks-body" style="font-size:0.85rem;margin-top:0.75rem;">— @erickdesigner</p>
+  </div>
+
+</main>
+
+<footer>
+  @erickdesigner · <a href="https://instagram.com/erickdesigner" target="_blank">Instagram</a>
+</footer>
+
+<script>
+  const TOTAL = 9;
+  let current = 0;
+
+  function goTo(n) {
+    const cur = document.getElementById('s' + current) || document.getElementById('sThanks');
+    cur.classList.remove('active');
+    current = n;
+    const next = document.getElementById('s' + n) || document.getElementById('sThanks');
+    next.classList.remove('active');
+    void next.offsetWidth;
+    next.classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleOpt(btn) {
+    btn.classList.toggle('selected');
+  }
+
+  function selectOpt(btn, groupId) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function selectScale(groupId, btn) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function finish() {
+    goTo(99);
+  }
+
+  function updateProgress() {
+    if (current === 0) {
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('progressLabel').textContent = '';
+      return;
+    }
+    if (current === 99) {
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('progressLabel').textContent = 'Concluído';
+      return;
+    }
+    const pct = Math.round((current / TOTAL) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = current + ' / ' + TOTAL;
+  }
+</script>
+
+</body>
+</html>
