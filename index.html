@@ -588,7 +588,44 @@
     btn.classList.add('selected');
   }
 
-  function finish() {
+  async function finish() {
+    const ENDPOINT = 'https://formspree.io/f/mredrjbd';
+
+    const getSelected = (groupId) => {
+      const group = document.getElementById(groupId);
+      if (!group) return '';
+      return Array.from(group.querySelectorAll('.opt-btn.selected')).map(b => b.textContent.trim().split('\n')[0]).join(', ');
+    };
+
+    const getScale = (groupId) => {
+      const group = document.getElementById(groupId);
+      if (!group) return '';
+      const sel = group.querySelector('.scale-btn.selected');
+      return sel ? sel.textContent.trim() : '';
+    };
+
+    const fd = new FormData();
+    fd.append('01 - Marca e oferta',        document.getElementById('q1')?.value || '');
+    fd.append('02 - Público-alvo',          document.getElementById('q2')?.value || '');
+    fd.append('03 - O que quer provocar',   getSelected('q3-opts'));
+    fd.append('04 - Tom de voz',            getSelected('q4-opts'));
+    fd.append('05 - Referências visuais',   document.getElementById('q5')?.value || '');
+    fd.append('06 - O que não quer',        document.getElementById('q6')?.value || '');
+    fd.append('07 - Estilo visual',         getSelected('q7-opts'));
+    fd.append('08a - Popular x Premium',    getScale('sc1'));
+    fd.append('08b - Descontraído x Sério', getScale('sc2'));
+    fd.append('08c - Clássico x Moderno',   getScale('sc3'));
+    fd.append('08d - Discreto x Chamativo', getScale('sc4'));
+    fd.append('09 - Formatos',              getSelected('q9-opts'));
+
+    try {
+      await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: fd
+      });
+    } catch(e) {}
+
     goTo(99);
   }
 
